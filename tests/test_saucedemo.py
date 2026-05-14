@@ -30,5 +30,14 @@ def test_pre_entrega_saucedemo(driver):
     badge = driver.find_element(By.CLASS_NAME, "shopping_cart_badge").text
     assert badge == "1"
     
+    # Validacion de Carrito (Titulo y Item)
+    driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
+    assert driver.find_element(By.CLASS_NAME, "title").text == "Your Cart"
+    cart_items = driver.find_elements(By.CLASS_NAME, "cart_item")
+    assert len(cart_items) == 1
+    
+
+    
+    
     
     
