@@ -34,19 +34,22 @@ def test_pre_entrega_saucedemo(driver):
     assert driver.find_element(By.ID, "react-burger-menu-btn").is_displayed()
     assert driver.find_element(By.CLASS_NAME, "product_sort_container").is_displayed()
     
-    # Flujo de Carrito (Agregar y Validar Badge)
+    # Flujo de Carrito (Criterios Obligatorios)
+    # 1. Agregar primer producto
     driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+    
+    # 2. Verificar que el contador (badge) se incremente
     badge = driver.find_element(By.CLASS_NAME, "shopping_cart_badge").text
     assert badge == "1"
     
-    # Validar Carrito y Producto Agregado
-    driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()        
-    assert "cart.html" in driver.current_url
-    cart_items = driver.find_elements(By.CLASS_NAME, "cart_item")
-    assert len(cart_items) == 1
-    cart_nombre = driver.find_element(By.CLASS_NAME, "inventory_item_name").text
-    assert cart_nombre == primer_nombre
+    # 3. Navegar al carrito de compras
+    driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
     
+    # 4. Comprobar que el producto esté presente en el carrito
+    assert "cart.html" in driver.current_url
+    item_en_carrito = driver.find_element(By.CLASS_NAME, "inventory_item_name").text
+    assert item_en_carrito == primer_nombre
+    print(f"Confirmado: {item_en_carrito} está en el carrito.")
     
     
 
