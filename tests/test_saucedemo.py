@@ -1,59 +1,76 @@
 import pytest
 from selenium.webdriver.common.by import By
-from utils.functions import configurar_navegador
+from pages import login_page
+from pages import inventory_page
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+from pages.cart_page import CartPage
 
-@pytest.fixture
-def driver():
-    # Inicializa y cierra navegador
-    browser = configurar_navegador()
-    yield browser
-    browser.quit()
-
-def test_pre_entrega_saucedemo(driver):
+def test_producto_en_carrito(driver):
     # Navegacion y Login
-    driver.get("https://www.saucedemo.com/")
-    driver.find_element(By.ID, "user-name").send_keys("standard_user")
-    driver.find_element(By.ID, "password").send_keys("secret_sauce")
-    driver.find_element(By.ID, "login-button").click()
+    login_page = LoginPage(driver)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
+
+    inventory_page = InventoryPage(driver)
     
     # Validacion de URL y Logo
-    assert "inventory.html" in driver.current_url
-    assert driver.find_element(By.CLASS_NAME, "app_logo").text == "Swag Labs"
+    assert inventory_page.estoy_en_inventory()
+    assert inventory_page.validar_logo() == "Swag Labs"
     
     # Verificacion de Catalogo (Criterios Minimos)
-    assert driver.find_element(By.CLASS_NAME, "title").text == "Products"
-    items = driver.find_elements(By.CLASS_NAME, "inventory_item")
-    assert len(items) > 0 # Valida presencia de productos
+    assert inventory_page.validar_titulo() == "Products"
+    assert inventory_page.cantidad_productos() > 0 # Valida presencia de productos
     
     # Extraer Nombre y Precio del primero (Criterio Minimo)
-    primer_nombre = driver.find_element(By.CLASS_NAME, "inventory_item_name").text
-    primer_precio = driver.find_element(By.CLASS_NAME, "inventory_item_price").text
+    primer_nombre, primer_precio = inventory_page.obtener_primer_producto()
     print(f"\nProducto: {primer_nombre} | Precio: {primer_precio}")
 
     # Validar elementos de interfaz (Menu y Filtros)
-    assert driver.find_element(By.ID, "react-burger-menu-btn").is_displayed()
-    assert driver.find_element(By.CLASS_NAME, "product_sort_container").is_displayed()
+    assert inventory_page.menu_visible()
+    assert inventory_page.filtro_visible()
     
     # Flujo de Carrito (Criterios Obligatorios)
-    # 1. Agregar primer producto
-    driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+    # 1. Agregar producto
+    inventory_page.agregar_producto()
     
     # 2. Verificar que el contador (badge) se incremente
-    badge = driver.find_element(By.CLASS_NAME, "shopping_cart_badge").text
-    assert badge == "1"
+    assert inventory_page.obtener_badge() == "1"
     
     # 3. Navegar al carrito de compras
-    driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
+    inventory_page.abrir_carrito()
+    cart_page = CartPage(driver)
     
-    # 4. Comprobar que el producto esté presente en el carrito
-    assert "cart.html" in driver.current_url
-    item_en_carrito = driver.find_element(By.CLASS_NAME, "inventory_item_name").text
+    # 4. Comprobar que el producto este presente en el carrito
+    assert cart_page.estoy_en_carrito()
+    item_en_carrito = cart_page.obtener_producto()
     assert item_en_carrito == primer_nombre
     print(f"Confirmado: {item_en_carrito} está en el carrito.")
-    
-    
+ 
+def test_catalogo(driver):    
+    login_page = LoginPage(driver)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
 
+    inventory_page = InventoryPage(driver)
     
+    assert inventory_page.estoy_en_inventory()
+    assert inventory_page.validar_logo() == "Swag Labs"
+    assert inventory_page.validar_titulo() == "Products"
+    assert inventory_page.cantidad_productos() > 0
     
+    nombre, precio = inventory_page.obtener_primer_producto()
+
+    print(f"Producto: {nombre} - {precio}")
     
-    
+def test_agregar_producto(driver):
+
+    login_page = LoginPage(driver)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
+
+    inventory_page = InventoryPage(driver)
+
+    inventory_page.agregar_producto()
+
+    assert inventory_page.obtener_badge() == "1"

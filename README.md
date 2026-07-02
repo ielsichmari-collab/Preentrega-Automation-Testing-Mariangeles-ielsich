@@ -1,19 +1,57 @@
-# Pre-Entrega QA Automation - Mariangeles Ielsich
+# Proyecto Final QA Automation - Mariangeles Ielsich
 
-Proyecto de automatización de pruebas realizado con Python, Selenium WebDriver y Pytest. 
-El objetivo es validar los flujos de Login, Catálogo y Carrito en la web SauceDemo.
+Proyecto de automatización de pruebas realizado con Python, Selenium WebDriver y Pytest.
+El objetivo es validar los principales flujos de la aplicación SauceDemo mediante pruebas automatizadas y aplicar los conceptos aprendidos durante el curso.
 
-## Tecnologias utilizadas
-* **Python**
-* **Selenium WebDriver**
-* **Pytest**
-* **Pytest HTML**
-* **Git**
+## Tecnologías utilizadas
 
-## Instalacion
-Para instalar las librerías necesarias, ejecutar:
-`pip install selenium webdriver-manager pytest pytest-html`
+- Python
+- Selenium WebDriver
+- Pytest
+- Requests
+- Pytest HTML
+- WebDriver Manager
+- Git
 
-## Ejecucion
-Para ejecutar los tests y generar el reporte automático:
-`python -m pytest tests/test_saucedemo.py --html=reports/reporte.html`
+## Funcionalidades implementadas
+
+- Page Object Model (POM).
+- Casos de prueba para Login, Catálogo y Carrito.
+- Escenario negativo de login.
+- Parametrización con Pytest.
+- Uso de datos externos.
+- Pruebas de API (GET, POST y DELETE).
+- Generación automática de reporte HTML.
+
+## Instalación
+
+Instalar las dependencias del proyecto:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Ejecución
+
+Ejecutar todos los tests:
+
+```bash
+pytest
+```
+
+Generar reporte HTML:
+
+```bash
+pytest --html=reports/reporte.html --self-contained-html
+```
+
+## Estructura del proyecto
+
+```
+pages/
+tests/
+utils/
+data/
+reports/
+screenshots/
+```
